@@ -89,42 +89,26 @@ END LISTA_EMP;
 
 -- 4)
 -- PROCEDIMIENTO
-create or replace PROCEDURE CONSULTA_PRECIO 
-(
-  PI_PRODUCT_ID IN PRODUCT.PRODUCT_ID%TYPE 
-, PO_LIST_PRICE OUT PRICE.LIST_PRICE%TYPE 
-, PO_MIN_PRICE OUT PRICE.MIN_PRICE%TYPE 
-) AS 
-    
+CREATE OR REPLACE PROCEDURE CONSULTA_PRECIO (
+    P_product_id IN  price.product_id%TYPE,
+    P_list_price OUT price.list_price%TYPE,
+    P_min_price  OUT price.min_price%TYPE
+) AS
 BEGIN
-  SELECT list_price, min_price
-    INTO po_list_price, po_min_price
-    FROM price
-    WHERE product_id = pi_product_id
-        AND end_date IS NULL;
+    SELECT list_price, min_price
+      INTO P_list_price, P_min_price
+      FROM price
+     WHERE product_id = P_product_id
+       AND end_date IS NULL;
+
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
-        po_list_price := NULL;
-        po_min_price := NULL;
-        dbms_output.put_line('ERROR: No se encontró un producto con ID '||pi_product_id);
+        dbms_output.put_line('El producto ' || P_product_id || ' no existe.');
+    WHEN TOO_MANY_ROWS THEN
+        dbms_output.put_line('El producto ' || P_product_id || ' tiene más de un precio vigente.');
     WHEN OTHERS THEN
-        po_list_price := NULL;
-        po_min_price := NULL;
-        dbms_output.put_line('ERROR INESPERADO ('||SQLCODE||'): '||SQLERRM);
+        dbms_output.put_line('Error inesperado (' || SQLCODE || '): ' || SQLERRM);
 END CONSULTA_PRECIO;
-
--- BLOQUE ANÓNIMO
-SET SERVEROUTPUT ON
-DECLARE 
-    v_list_price price.list_price%TYPE;
-    v_min_price price.min_price%TYPE;
-BEGIN
-    consulta_precio(100860, v_list_price, v_min_price);
-    IF v_list_price IS NOT NULL THEN
-        dbms_output.put_line('- Precio de lista: $'||v_list_price); -- - Precio de lista: $35
-        dbms_output.put_line('- Precio mínimo: $'||v_min_price); -- - Precio mínimo: $28
-    END IF;
-END;
 
 -- 5)
 -- FUNCIÓN
@@ -163,24 +147,50 @@ BEGIN
 END;
 
 -- 6)
-CREATE OR REPLACE FUNCTION Valida_Loc (
-    p_codigo IN location.location_id%TYPE
-)
-RETURN BOOLEAN
-IS
-    v_location location.location_id%TYPE;
+CREATE OR REPLACE FUNCTION VALIDA_LOC 
+(
+  P_LOCATION_ID IN LOCATION.LOCATION_ID%TYPE 
+) RETURN BOOLEAN AS 
+    V_LOCATION_ID LOCATION.LOCATION_ID%TYPE;
 BEGIN
     SELECT location_id
-    INTO v_location
+    INTO V_LOCATION_ID
     FROM location
-    WHERE location_id = p_codigo;
-
+    WHERE location_id = p_location_id;
+    
     RETURN TRUE;
-
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
         RETURN FALSE;
-END;
+    WHEN VALUE_ERROR THEN
+        dbms_output.put_line('ERROR: El valor ingresado como LOCATION_ID es inválido.');
+        RETURN FALSE;
+    WHEN OTHERS THEN 
+        dbms_output.put_line('ERROR INESPERADO ('||SQLCODE||'): '||SQLERRM);
+        RETURN FALSE;
+END VALIDA_LOC;
 
 -- 7)
+CREATE OR REPLACE PROCEDURE NEW_DEPT (
+    P_DEPARTMENT_ID IN DEPARTMENT.DEPARTMENT_ID%TYPE,
+    P_NAME          IN DEPARTMENT.NAME%TYPE,
+    P_LOCATION_ID   IN DEPARTMENT.LOCATION_ID%TYPE
+) AS
+BEGIN
+    IF NOT VALIDA_LOC(P_LOCATION_ID) THEN
+        RAISE_APPLICATION_ERROR(-20001, 'ERROR: La localidad ' || P_LOCATION_ID ||' no existe, por lo que se rechaza la inserción del nuevo departamento.');
+    END IF;
+
+    INSERT INTO department (department_id, name, location_id)
+    VALUES (P_DEPARTMENT_ID, P_NAME, P_LOCATION_ID);
+
+    dbms_output.put_line('Se insertó el departamento ' || P_DEPARTMENT_ID || ' correctamente.');
+
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        RAISE_APPLICATION_ERROR(-20002, 'ERROR: Ya existe un departamento con ese ID (' || P_DEPARTMENT_ID || ').');
+    WHEN OTHERS THEN
+        RAISE;
+END NEW_DEPT;
+
 -- 8)
