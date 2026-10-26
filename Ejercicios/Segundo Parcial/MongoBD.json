@@ -1,1 +1,51 @@
-// comen
+1) 
+db.facturas.aggregate([
+  { $match: { nroFactura: {$gt: 1000} } },
+  { $addFields: { Cantidad_items: {$size: '$item'} } },
+  { $match: { Cantidad_items: { $gt: 2 } } },
+  { $count: 'string' },
+]);
+
+
+2)
+{ "nro_socio": 112323,
+  "nombre": "Juan Cruz",
+  "apellido": "Broccio",
+  "dni": 27787688,
+  "direccion": "Pje Bollini 778-CABA",
+  "deportes": {"id_deporte": 1, 
+              "descripcion": "RUGBY"}
+  "cuotas": [
+    {"nro_cuota": 1,
+      "fecha_emision": "01/01/2014",
+      "fecha_vencimiento": "01/01/2014",
+      "importe": 325,
+      "fecha_pago": "07/01/2014" },
+    
+    {"nro_cuota": 2,
+      "fecha_emision": "01/02/2014",
+      "fecha_vencimiento": "01/02/2014",
+      "importe": 325,
+      "fecha_pago": "06/02/2014" },
+    
+      {"nro_cuota": 3,
+       "fecha_emision": "01/03/2014",
+       "fecha_vencimiento": "01/03/2014",
+       "importe": 325,
+       "fecha_pago": "07/03/2014" },
+    
+      {"nro_cuota": 4,
+       "fecha_emision": "01/04/2014",
+       "fecha_vencimiento": "01/04/2014",
+       "importe": 325,
+       "fecha_pago": null }
+  ]
+}
+  
+3)
+a. db.socios.find({apellido:"Pardo"})
+b. db.socios.find({cuotas: $elementMatch: {nro_cuota: 2, importe:{$gt: 270}}})
+c. db.socios.find({ $or: [{dni: {$gt: 300000000}},
+                          {name: {$in: ["Rodolfo", "Maria", "Soledad"]} } 
+                          ]
+                  )
