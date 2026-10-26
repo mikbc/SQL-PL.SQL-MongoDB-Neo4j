@@ -27,6 +27,7 @@ create or replace PACKAGE PA_VENTAS AS
   
   
 END PA_VENTAS;
+
 -------------------------------------------------------- BODY -----------------------------------------------------------
 CREATE OR REPLACE PACKAGE BODY PA_VENTAS AS
 
@@ -36,9 +37,8 @@ CREATE OR REPLACE PACKAGE BODY PA_VENTAS AS
   e_prod_repetido  EXCEPTION;
   PRAGMA EXCEPTION_INIT(e_prod_repetido, -20002);
 
-  ------------------------------------------------------------------
+ 
   -- 2) FUNCIÓN PRIVADA (no está en la spec)
-  ------------------------------------------------------------------
   FUNCTION F_GET_ID (
     P_DESCRIPTION IN PRODUCT.DESCRIPTION%TYPE
   ) RETURN PRODUCT.PRODUCT_ID%TYPE
@@ -82,7 +82,7 @@ CREATE OR REPLACE PACKAGE BODY PA_VENTAS AS
           AND I.product_id = p_prod
         ORDER BY O.order_date, O.order_id;
 
-    v_cont      NUMBER := 0;   -- ventas del producto actual
+    v_cont NUMBER := 0;   -- ventas del producto actual
     v_cont_prod NUMBER := 0;   -- productos encontrados
   BEGIN
     FOR i IN c_product LOOP
@@ -118,9 +118,7 @@ CREATE OR REPLACE PACKAGE BODY PA_VENTAS AS
         dbms_output.put_line('ERROR INESPERADO ('||SQLCODE||'): '||SQLERRM);
   END P_MOSTRAR_VENTAS;
 
-  ------------------------------------------------------------------
   -- 1) ALTA DE ÍTEM por id (hace el trabajo real)
-  ------------------------------------------------------------------
   PROCEDURE P_ALTA_ITEM (
     P_PRODUCT_ID IN ITEM.PRODUCT_ID%TYPE,
     P_ORDER_ID   IN ITEM.ORDER_ID%TYPE,
@@ -136,8 +134,7 @@ CREATE OR REPLACE PACKAGE BODY PA_VENTAS AS
     PRAGMA EXCEPTION_INIT(e_fk, -2291);
     e_not_null EXCEPTION;
     PRAGMA EXCEPTION_INIT(e_not_null, -1400);
-    e_check EXCEPTION;
-    PRAGMA EXCEPTION_INIT(e_check, -2290);
+
   BEGIN
     P_ITEM_ID := NULL;
 
@@ -174,17 +171,13 @@ CREATE OR REPLACE PACKAGE BODY PA_VENTAS AS
         dbms_output.put_line('ERROR: La orden '||P_ORDER_ID||' no existe.');
     WHEN e_not_null THEN
         dbms_output.put_line('ERROR: Falta un dato obligatorio.');
-    WHEN e_check THEN
-        dbms_output.put_line('ERROR: Un valor viola una restricción CHECK.');
     WHEN DUP_VAL_ON_INDEX THEN
         dbms_output.put_line('ERROR: El ítem ya existe en la orden '||P_ORDER_ID);
     WHEN OTHERS THEN
         dbms_output.put_line('ERROR INESPERADO ('||SQLCODE||'): '||SQLERRM);
   END P_ALTA_ITEM;
 
-  ------------------------------------------------------------------
   -- 1) ALTA DE ÍTEM por descripción (sobrecarga)
-  ------------------------------------------------------------------
   PROCEDURE P_ALTA_ITEM (
     P_DESCRIPTION IN PRODUCT.DESCRIPTION%TYPE,
     P_ORDER_ID    IN ITEM.ORDER_ID%TYPE,
@@ -205,9 +198,7 @@ CREATE OR REPLACE PACKAGE BODY PA_VENTAS AS
         dbms_output.put_line('ERROR INESPERADO ('||SQLCODE||'): '||SQLERRM);
   END P_ALTA_ITEM;
 
-  ------------------------------------------------------------------
   -- 3) LISTAR VENTAS (3 versiones, las 3 delegan en P_MOSTRAR_VENTAS)
-  ------------------------------------------------------------------
   PROCEDURE P_LISTAR_VENTAS (
     P_PRODUCT_ID IN PRODUCT.PRODUCT_ID%TYPE
   ) AS
@@ -237,4 +228,3 @@ CREATE OR REPLACE PACKAGE BODY PA_VENTAS AS
   END P_LISTAR_VENTAS;
 
 END PA_VENTAS;
-/
