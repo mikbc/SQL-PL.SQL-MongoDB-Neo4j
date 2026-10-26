@@ -1,0 +1,6 @@
+3)
+a. db.facturas.find({nroFactura: 1070})
+b. db.facturas.deleteMany({condPago: "30 Ds FF"})
+c. db.facturas.updateMany({condPago: "CONTADO"}, {$set: {condPago: "TARJETA"}})
+d. db.facturas.find({nroFactura: {$gt:1080}})
+e. db.facturas.find({condPago: "60 Ds FF"})
