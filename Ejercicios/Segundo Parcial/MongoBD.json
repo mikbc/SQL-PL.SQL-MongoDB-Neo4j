@@ -1,10 +1,15 @@
 1) 
-db.facturas.aggregate([
-  { $match: { nroFactura: {$gt: 1000} } },
-  { $addFields: { Cantidad_items: {$size: '$item'} } },
-  { $match: { Cantidad_items: { $gt: 2 } } },
-  { $count: 'string' },
+db.facturas.aggregate([                                   Trabaja sobre la colección facturas.
+  
+  { $match: { nroFactura: {$gt: 1000} } },                Busca las facturas con nroFactura mayores a 1000.
+  
+  { $addFields: { Cantidad_items: {$size: '$item'} } },   Agrega un campo nuevo de Cantidad_items con la cantidad de elementos del array item.
+  
+  { $match: { Cantidad_items: { $gt: 2 } } },             Filtra aquellas facturas que tienen una cantidad de items mayor a 2 
+  { $count: 'string' },                                   y devuelve la cantidad que hay.
 ]);
+
+En resumen, cuenta cuántas facturas hay con nroFactura mayor a 1000 y tienen más de 2 ítems.
 
 
 2)
