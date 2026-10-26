@@ -1,0 +1,67 @@
+1)
+{ "vendedores": [
+    { "id_vendedor": 1,
+      "nombre": "Juan Perez"
+      "correo_electronico": "jperez@gmail.com",
+      "telefono": 1129943065
+      "fecha_contratacion": "26-10-2026"
+      "actividad": True
+    } ],
+  "locales": [
+    { "nombre": "Local Centro",
+      "direccion": "Av. Corrientes 1234",
+      "ciudad": "Buenos Aires",
+      "telefono": 1145678901,
+      "horario_atencion": "09:00-18:00",
+      "supervisor": {"id_vendedor": 1} -- PUNTO 2)
+    } ],
+  "insumos": [
+    { "insumo_id": 1,
+      "nombre": "Tornillos",
+      "descripcion": "Tornillos de acero",
+      "stock_actual": 500,
+      "unidad_medida": "unidades",
+      "proveedor": "Proveedor ABC"
+    } ],
+  "precios_insumos": [
+    { "insumo_id": 1,
+      "precio": 1500.50,
+      "fecha_inicio": "2026-01-01",
+      "fecha_fin": "2026-12-31"
+  ]
+}
+
+2)
+{ "nro_socio": 112323,
+  "nombre": "Juan Cruz",
+  "apellido": "Broccio",
+  "dni": 27787688,
+  "direccion": "Pje Bollini 778-CABA",
+  "deportes": {"id_deporte": 1, 
+              "descripcion": "RUGBY"}
+  "cuotas": [
+    {"nro_cuota": 1,
+      "fecha_emision": "01/01/2014",
+      "fecha_vencimiento": "01/01/2014",
+      "importe": 325,
+      "fecha_pago": "07/01/2014" },
+    
+    {"nro_cuota": 2,
+      "fecha_emision": "01/02/2014",
+      "fecha_vencimiento": "01/02/2014",
+      "importe": 325,
+      "fecha_pago": "06/02/2014" },
+    
+      {"nro_cuota": 3,
+       "fecha_emision": "01/03/2014",
+       "fecha_vencimiento": "01/03/2014",
+       "importe": 325,
+       "fecha_pago": "07/03/2014" },
+    
+      {"nro_cuota": 4,
+       "fecha_emision": "01/04/2014",
+       "fecha_vencimiento": "01/04/2014",
+       "importe": 325,
+       "fecha_pago": null }
+  ]
+}
