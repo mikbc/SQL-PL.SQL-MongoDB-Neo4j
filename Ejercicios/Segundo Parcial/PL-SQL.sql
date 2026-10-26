@@ -60,10 +60,8 @@ CREATE OR REPLACE PACKAGE BODY PA_VENTAS AS
         RAISE_APPLICATION_ERROR(-20003,'ERROR INESPERADO ('||SQLCODE||'): '||SQLERRM);
   END F_GET_ID;
 
-  ------------------------------------------------------------------
   -- PRIVADO: muestra las ventas. NULL = todos los productos.
   -- Tiene nombre propio (NO sobrecargado) y lo usan las 3 versiones de listar.
-  ------------------------------------------------------------------
   PROCEDURE P_MOSTRAR_VENTAS (
     P_PRODUCT_ID IN PRODUCT.PRODUCT_ID%TYPE
   ) AS
